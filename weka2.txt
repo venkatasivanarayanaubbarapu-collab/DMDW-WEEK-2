@@ -1,0 +1,36 @@
+
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Discretize;
+import weka.associations.Apriori;
+
+public class AprioriAssociation {
+    public static void main(String[] args) throws Exception {
+
+        // Load dataset
+        String filePath = "iris.arff";
+        Instances data = DataSource.read(filePath);
+
+        // Apply discretization to numeric attributes
+        Discretize filter = new Discretize();
+        filter.setBins(3);
+        filter.setInputFormat(data);
+        data = Filter.useFilter(data, filter);
+
+        // Create Apriori model
+        Apriori apriori = new Apriori();
+
+        // Set minimum support and confidence
+        apriori.setLowerBoundMinSupport(0.1);
+        apriori.setMinMetric(0.7);
+        apriori.setNumRules(10);
+
+        // Build association rules
+        apriori.buildAssociations(data);
+
+        // Display results
+        System.out.println("=== Apriori Association Rules ===");
+        System.out.println(apriori);
+    }
+}
